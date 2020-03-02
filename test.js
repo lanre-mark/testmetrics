@@ -125,13 +125,12 @@ const generateNumber = (minValue, maxValue, roundup, decimalplace) => {
 
 const generateObject = (options, returnDataType, origDataTypes, origDataSetSize) => {
     options.dataSetTypes = origDataTypes.filter(item => item !== returnDataType);
-    options.dataSetSize = origDataSetSize;
     // remove defaultData if its in options
     if (options.defaultData) {
         delete options.defaultData
     }
     options.returnDataType = returnDataType;
-    options.dataSetSize = randomizeType(options.dataSetSize / (options.dataSetTypes.length + 1)) + 1
+    options.dataSetSize = randomizeType(origDataSetSize / (options.dataSetTypes.length + 1)) + 1
 
     // dataSetSize = randomizeType(dataSetSize / setTypes.length) + 1
     // setTypes = options.dataSetTypes.filter(item => item !== options.returnDataType);
