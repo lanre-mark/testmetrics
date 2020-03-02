@@ -6,7 +6,7 @@ const {
     formatByteSize
 } = require('./testmetrics');
 
-var rangeOfTypes;
+var rangeOfTypes, rootDataSize;
 // // PRODUCTION
 // const {testmetrics, argumentTypes} = require('./metrics');
 
@@ -62,19 +62,18 @@ function randomDataSet(options) {
     } = options;
     // avoid mutation data types available in random dataSet
     rangeOfTypes = (!rangeOfTypes) ? options.dataSetTypes.slice() : rangeOfTypes;
-    console.log(rangeOfTypes)
+    // avid changes in the main dataset size required when the function was first invoked
+    rootDataSize = (!rootDataSize) ? options.dataSetSize : rootDataSize;
 
-    // console.log(dataSetSize)
-
-    // console.log('Invoked/Reinvoked Nucleus')
-    // console.log(`returnDataType ::: ${returnDataType}`);
-    // console.log(`dataSetSize ::: ${dataSetSize}`);
-    // console.log(`minValue ::: ${minValue}`);
-    // console.log(`maxValue ::: ${maxValue}`);
-    // console.log(`roundup ::: ${roundup}`);
-    // console.log(`decimalplace ::: ${decimalplace}`);
-    // console.log(`strLength ::: ${strLength}`);
-    // console.log('dataSetTypes ::: ', dataSetTypes);
+    console.log('Invoked/Reinvoked Nucleus')
+    console.log(`returnDataType ::: ${returnDataType}`);
+    console.log(`dataSetSize ::: ${dataSetSize}`);
+    console.log(`minValue ::: ${minValue}`);
+    console.log(`maxValue ::: ${maxValue}`);
+    console.log(`roundup ::: ${roundup}`);
+    console.log(`decimalplace ::: ${decimalplace}`);
+    console.log(`strLength ::: ${strLength}`);
+    console.log('dataSetTypes ::: ', dataSetTypes);
 
     // // console.log(`defaultData ::: ${defaultData}`);
 
@@ -92,7 +91,7 @@ function randomDataSet(options) {
                 // invoke magical functions to generate data based on the data set array provided in the options argument randomly using the
                 // IIFE in scope
                 const typeConst = dataSetTypes[randomizeType(dataSetTypes.length)]
-                return (typeConst === 'string') ? '' : (typeConst === 'number') ? generateNumber(minValue, maxValue, roundup, decimalplace) : (typeConst === 'boolean') ? generateBoolean() : (typeConst === 'array' || typeConst === 'object') ? generateObject(options, typeConst) : null;
+                return (typeConst === 'string') ? '' : (typeConst === 'number') ? generateNumber(minValue, maxValue, roundup, decimalplace) : (typeConst === 'boolean') ? generateBoolean() : (typeConst === 'array' || typeConst === 'object') ? generateObject(options, typeConst, rangeOfTypes, rootDataSize) : null;
             })(dataSetTypes);
 
             // using a reducer, generate return dataSet based returnDataType provided in the options argument
@@ -124,8 +123,9 @@ const generateNumber = (minValue, maxValue, roundup, decimalplace) => {
     return (roundup) ? Math.round((Math.random() * (maxValue - minValue) + minValue) * Math.pow(10, decimalplace)) / Math.pow(10, decimalplace) : dataRandom = Math.random() * (maxValue - minValue) + minValue;
 }
 
-const generateObject = (options, returnDataType) => {
-    options.dataSetTypes = options.dataSetTypes.filter(item => item !== returnDataType); //.slice();
+const generateObject = (options, returnDataType, typeRange, returnDataSize) => {
+    options.dataSetTypes = typeRange.filter(item => item !== returnDataType);
+    options.dataSetSize = returnDataSize;
     // remove defaultData if its in options
     if (options.defaultData) {
         delete options.defaultData
