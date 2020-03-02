@@ -5,6 +5,8 @@ const {
     sizeofExecutedObject,
     formatByteSize
 } = require('./testmetrics');
+
+var rangeOfTypes;
 // // PRODUCTION
 // const {testmetrics, argumentTypes} = require('./metrics');
 
@@ -58,9 +60,13 @@ function randomDataSet(options) {
     let {
         returnDataType = 'array', dataSetSize, minValue = 0, maxValue = dataSetSize, roundup = true, decimalplace = 0, strLength = 50, dataSetTypes = []
     } = options;
+    // avoid mutation data types available in random dataSet
+    rangeOfTypes = (!rangeOfTypes) ? options.dataSetTypes.slice() : rangeOfTypes;
+    console.log(rangeOfTypes)
 
     // console.log(dataSetSize)
 
+    // console.log('Invoked/Reinvoked Nucleus')
     // console.log(`returnDataType ::: ${returnDataType}`);
     // console.log(`dataSetSize ::: ${dataSetSize}`);
     // console.log(`minValue ::: ${minValue}`);
@@ -69,6 +75,7 @@ function randomDataSet(options) {
     // console.log(`decimalplace ::: ${decimalplace}`);
     // console.log(`strLength ::: ${strLength}`);
     // console.log('dataSetTypes ::: ', dataSetTypes);
+
     // // console.log(`defaultData ::: ${defaultData}`);
 
 
@@ -118,7 +125,7 @@ const generateNumber = (minValue, maxValue, roundup, decimalplace) => {
 }
 
 const generateObject = (options, returnDataType) => {
-
+    options.dataSetTypes = options.dataSetTypes.filter(item => item !== returnDataType); //.slice();
     // remove defaultData if its in options
     if (options.defaultData) {
         delete options.defaultData
@@ -128,7 +135,7 @@ const generateObject = (options, returnDataType) => {
 
     // dataSetSize = randomizeType(dataSetSize / setTypes.length) + 1
     // setTypes = options.dataSetTypes.filter(item => item !== options.returnDataType);
-    options.dataSetTypes = options.dataSetTypes.filter(item => item !== options.returnDataType);
+    // options.dataSetTypes = options.dataSetTypes.filter(item => item !== options.returnDataType).slice();
     // dataSetSize / setTypes.length + 1  ::: add one back to the setTypes.length because one was already filterered away
     // // randomizeType(dataSetSize / setTypes.length + 1) + 1 ::: add one back to the evaluated result from randomizetype to avoid zeros
     return randomDataSet(options);
