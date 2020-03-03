@@ -69,9 +69,16 @@ console.log(testmetrics(
 function randomDataSet(options) {
     // destrcuture arguments from options argument
     let {
-        returnDataType = 'array', dataSetSize, minValue = 0, maxValue = dataSetSize, roundup = true, decimalplace = 0, strLength = 50, dataSetTypes = []
+        returnDataType = 'array', dataSetSize, minValue = 0, maxValue = dataSetSize, roundup = true, decimalplace = 0, stringCase = 0, stringType = '', stringLength = 8, numberIsmultipleOf = -1, singleDigitStrings = 1, dataSetTypes = []
     } = options;
     // STRING
+    //  stringCase = 0 - LowerCase, 1 - UpperCase, 2 - TitleCase
+    //  stringType = '', 'hex', '.......' => for the pattern string generation
+    //  stringLength = 8 //especially for use case with hexadecimals
+    //  singleDigitStrings: 1 or 0. 0 is dynamic and can make numbers have more than a size/length of 1 but 1 will be just a digit
+
+    // NUMBER
+    //  numberIsmultipleOf = -1 ......
 
     // OBJECTS
 
@@ -79,6 +86,8 @@ function randomDataSet(options) {
     origDataTypes = (!origDataTypes) ? options.dataSetTypes.slice() : origDataTypes;
     // avoid changes in the main dataset size required when the function was first invoked
     origDataSetSize = (!origDataSetSize) ? options.dataSetSize : origDataSetSize;
+    // if numberIsmultipleOf is 0 in options, reset to -1
+    options.numberIsmultipleOf = !options.numberIsmultipleOf ? -1 : options.numberIsmultipleOf;
 
     // console.log('Invoked/Reinvoked Nucleus')
     // console.log(`returnDataType ::: ${returnDataType}`);
@@ -87,7 +96,11 @@ function randomDataSet(options) {
     // console.log(`maxValue ::: ${maxValue}`);
     // console.log(`roundup ::: ${roundup}`);
     // console.log(`decimalplace ::: ${decimalplace}`);
-    // console.log(`strLength ::: ${strLength}`);
+    // console.log(`stringCase ::: ${stringCase}`);
+    // console.log(`stringType ::: ${stringType}`);
+    // console.log(`stringLength ::: ${stringLength}`);
+    // console.log(`singleDigitStrings ::: ${singleDigitStrings}`);
+    // console.log(`numberIsmultipleOf ::: ${numberIsmultipleOf}`);
     // console.log('dataSetTypes ::: ', dataSetTypes);
 
     // // console.log(`defaultData ::: ${defaultData}`);
@@ -99,14 +112,14 @@ function randomDataSet(options) {
         //  invoke this IIFE in scope
 
         // initialize accumulator for returnDataType argument using the ternary operation to nest 3 If-Then for array, object and other primitive types
-        let initialDataSet = returnDataType === 'array' ? [] : returnDataType === 'object' ? {} : returnDataType === 'string' ? '' : returnDataType === 'number' ? -1 : returnDataType === 'boolean' ? false : returnDataSet;
+        let initialDataSet = returnDataType === 'array' ? [] : returnDataType === 'object' ? {} : returnDataType === 'string' ? generateString(options) : returnDataType === 'number' ? -1 : returnDataType === 'boolean' ? false : returnDataSet;
         return new Array(dataSetSize).fill(0).map(function(n) {
             // if the data set array in the options argument is empty, then generate numbers as default
-            return dataSetTypes.length === 0 ? generateNumber(minValue, maxValue, roundup, decimalplace) : (function(dataSetTypes) {
+            return dataSetTypes.length === 0 ? generateNumber(minValue, maxValue, roundup, decimalplace, numberIsmultipleOf) : (function(dataSetTypes) {
                 // invoke magical functions to generate data based on the data set array provided in the options argument randomly using the
                 // IIFE in scope
                 const typeConst = dataSetTypes[randomizeType(dataSetTypes.length)]
-                return (typeConst === 'string') ? '' : (typeConst === 'number') ? generateNumber(minValue, maxValue, roundup, decimalplace) : (typeConst === 'boolean') ? generateBoolean() : (typeConst === 'array' || typeConst === 'object') ? generateObject(options, typeConst, origDataTypes, origDataSetSize) : null;
+                return (typeConst === 'string') ? generateString(options) : (typeConst === 'number') ? generateNumber(minValue, maxValue, roundup, decimalplace, numberIsmultipleOf) : (typeConst === 'boolean') ? generateBoolean() : (typeConst === 'array' || typeConst === 'object') ? generateObject(options, typeConst, origDataTypes, origDataSetSize) : null;
             })(dataSetTypes);
 
             // using a reducer, generate return dataSet based returnDataType provided in the options argument
@@ -138,8 +151,56 @@ const generateBoolean = () => {
     return randomizeType(2) == 0 ? false : true;
 }
 
-const generateNumber = (minValue, maxValue, roundup, decimalplace) => {
+const generateNumber = (minValue, maxValue, roundup, decimalplace, numberIsmultipleOf) => {
     return (roundup) ? Math.round((Math.random() * (maxValue - minValue) + minValue) * Math.pow(10, decimalplace)) / Math.pow(10, decimalplace) : dataRandom = Math.random() * (maxValue - minValue) + minValue;
+}
+
+const generateString = (options) => {
+    let {
+        stringType = '', stringCase = 0, stringLength = 8, singleDigitStrings = 1
+    } = options
+
+    let {
+        dataSetSize,
+        minValue = 0,
+        maxValue = dataSetSize,
+        roundup = true,
+        decimalplace = 0,
+        numberIsmultipleOf = -1
+    } = options
+    if (singleDigitStrings = 1) {
+        // dataSetSize && maxValue could be more than 1 digit, 
+        //  change based on options argument
+        maxValue = 1;
+    }
+    let [string, setOfChars, numbers, hexChars] = ['', '', '0123456789', 'abcdef'];
+    if (stringType == '') {
+        return stringCase == 0 ? randstring[randomizeIndexSelection(0, randstring.length + 1)] : stringCase == 1 ? randstring[randomizeIndexSelection(0, randstring.length + 1)].toUpperCase() : stringCase == 2 ? stringTitlecase(randstring[randomizeIndexSelection(0, randstring.length + 1)]) : randstring[randomizeIndexSelection(0, randstring.length + 1)];
+    } else if (stringType == 'hex') {
+        setOfChars = stringCase == 1 ? numbers + hexChars.toUpperCase() : numbers + hexChars;
+        for (let ii = 1; ii <= stringLength; ii++) {
+            string += setOfChars.charAt(Math.floor(Math.random() * setOfChars.length));
+        }
+    } else {
+        // must be some pattern
+        for (let ii = 0; ii < stringType.length; ii++) {
+            if (stringType[ii] == " ") {
+                setOfChars = ' ';
+            } else if ((stringType[ii] == stringType[ii].toUpperCase()) && (stringType[ii] != stringType[ii].toLowerCase())) {
+                setOfChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            } else if ((stringType[ii] == stringType[ii].toLowerCase()) && (stringType[ii] != stringType[ii].toUpperCase())) {
+                setOfChars = "abcdefghijklmnopqrstuvwxyz";
+            } else if ('0123456789'.indexOf(stringType[ii]) !== -1) {
+                setOfChars = "0123456789";
+            } else {
+                setOfChars = "#!@~$%^&*)-_";
+            }
+            // invoke generateNumber only if stringType @ ii is numeric
+            //  && singleDigitsStrings are not enforced i.e. we could generate numbers that have more than a single digit
+            string += ('0123456789'.indexOf(stringType[ii]) !== -1) && (singleDigitStrings === 0) ? generateNumber(minValue, maxValue, roundup, decimalplace, numberIsmultipleOf) : setOfChars.charAt(Math.floor(Math.random() * setOfChars.length));
+        }
+    }
+    return string;
 }
 
 const generateObject = (options, returnDataType, origDataTypes, origDataSetSize) => {
@@ -163,36 +224,53 @@ function stringTitlecase(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const stringGenConcept = (charsType = '', stringCase = 0) => {
-    let [string, setOfChars, numbers, hexChars] = ['', '', '0123456789', 'abcdef'];
-    if (charsType == '') {
-        return stringCase == 0 ? randstring[randomizeIndexSelection(0, randstring.length + 1)] : stringCase == 1 ? randstring[randomizeIndexSelection(0, randstring.length + 1)].toUpperCase() : stringCase == 2 ? stringTitlecase(randstring[randomizeIndexSelection(0, randstring.length + 1)]) : randstring[randomizeIndexSelection(0, randstring.length + 1)];
-    } else if (charsType == 'hex') {
-        setOfChars = stringCase == 2 ? numbers + hexChars.toUpperCase() : numbers + hexChars;
+const stringGenConcept = (stringType = '', stringCase = 0, stringLength = 8) => {
+    let options = {
+        returnDataType: 'array',
+        dataSetSize: 50,
+        minValue: 0,
+        maxValue: 50,
+        roundup: true,
+        decimalplace: 0,
+        stringCase: 1, //[0- LowerCase...1 UpperCase...2 - TitleCase]
+        stringType: 'A0B0C0D0E0', // '', 'hex' '......' => pattern
+        stringLength: 8,
+        singleDigitStrings: 0,
+        numberIsmultipleOf: -1,
+        dataSetTypes: [],
+        defaultData: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    }
 
+    let [string, setOfChars, numbers, hexChars] = ['', '', '0123456789', 'abcdef'];
+    if (stringType == '') {
+        return stringCase == 0 ? randstring[randomizeIndexSelection(0, randstring.length + 1)] : stringCase == 1 ? randstring[randomizeIndexSelection(0, randstring.length + 1)].toUpperCase() : stringCase == 2 ? stringTitlecase(randstring[randomizeIndexSelection(0, randstring.length + 1)]) : randstring[randomizeIndexSelection(0, randstring.length + 1)];
+    } else if (stringType == 'hex') {
+        setOfChars = stringCase == 1 ? numbers + hexChars.toUpperCase() : numbers + hexChars;
+        for (let ii = 1; ii <= stringLength; ii++) {
+            string += setOfChars.charAt(Math.floor(Math.random() * setOfChars.length));
+        }
     } else {
         // must be some pattern
-        for (let ii = 0; ii < charsType.length; ii++) {
-            if (charsType[ii] == " ") {
+        for (let ii = 0; ii < stringType.length; ii++) {
+            if (stringType[ii] == " ") {
                 setOfChars = ' ';
-            } else if ((charsType[ii] == charsType[ii].toUpperCase()) && (charsType[ii] != charsType[ii].toLowerCase())) {
+            } else if ((stringType[ii] == stringType[ii].toUpperCase()) && (stringType[ii] != stringType[ii].toLowerCase())) {
                 setOfChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            } else if ((charsType[ii] == charsType[ii].toLowerCase()) && (charsType[ii] != charsType[ii].toUpperCase())) {
+            } else if ((stringType[ii] == stringType[ii].toLowerCase()) && (stringType[ii] != stringType[ii].toUpperCase())) {
                 setOfChars = "abcdefghijklmnopqrstuvwxyz";
-            } else if ('0123456789'.indexOf(charsType[ii]) !== -1) {
+            } else if ('0123456789'.indexOf(stringType[ii]) !== -1) {
                 setOfChars = "0123456789";
-
             } else {
-                setOfChars = "#!@~$%^&*)-_"
+                setOfChars = "#!@~$%^&*)-_";
             }
-            console.log(setOfChars)
-            string += setOfChars.charAt(Math.floor(Math.random() * setOfChars.length));
+            string += ('0123456789'.indexOf(stringType[ii]) !== -1) && (options.singleDigitStrings === 0) ? generateNumber(options.minValue, options.maxValue, options.roundup, options.decimalplace, options.numberIsmultipleOf) : setOfChars.charAt(Math.floor(Math.random() * setOfChars.length));
         }
     }
     return string;
 }
 
 console.log(stringGenConcept('A0B0C0D0E0'));
+// console.log(stringGenConcept('hex', 1));
 
 // console.log(randomDataSet({
 //         returnDataType: 'array',
@@ -201,7 +279,11 @@ console.log(stringGenConcept('A0B0C0D0E0'));
 //         maxValue: 10,
 //         roundup: true,
 //         decimalplace: 4,
-//         strLength: 50,
+//     // stringCase: 0, [0- LowerCase...1 UpperCase...2 - TitleCase]
+//         stringType: '', // '', 'hex' '......' => pattern
+//         stringLength: 8, 
+//          singleDigitStrings: 1, // or 1 for singleDigits and 0 for more than one digit
+//         numberIsmultipleOf: -1,
 //         dataSetTypes: ['string', 'number', 'boolean', 'array', 'object']
 // })) //, 'object'
 
@@ -212,7 +294,11 @@ console.log(stringGenConcept('A0B0C0D0E0'));
 //     // maxValue: 50,
 //     // roundup: true,
 //     // decimalplace: 0,
-//     // strLength: 50,
+//     // stringCase: 0, [0- LowerCase...1 UpperCase...2 - TitleCase]
+//         stringType: '', // '', 'hex' '......' => pattern
+//         stringLength: 8, 
+//          singleDigitStrings: 1, // or 1 for singleDigits and 0 for more than one digit
+//         numberIsmultipleOf: -1,
 //     // dataSetTypes: [],
 //     // defaultData: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 // }))
