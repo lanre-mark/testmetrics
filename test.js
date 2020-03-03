@@ -152,22 +152,41 @@ const generateBoolean = () => {
 }
 
 const generateNumber = (minValue, maxValue, roundup, decimalplace, numberIsmultipleOf) => {
-    return (roundup) ? Math.round((Math.random() * (maxValue - minValue) + minValue) * Math.pow(10, decimalplace)) / Math.pow(10, decimalplace) : dataRandom = Math.random() * (maxValue - minValue) + minValue;
+    let dataRandom,
+        keepGenerating = true;
+    if (numberIsmultipleOf == -1) {
+        if (roundup) {
+            dataRandom = Math.round((Math.random() * (maxValue - minValue) + minValue) * Math.pow(10, decimalplace)) / Math.pow(10, decimalplace)
+        } else {
+            dataRandom = Math.random() * (maxValue - minValue) + minValue;
+        }
+    } else {
+        while (keepGenerating) {
+            if (roundup) {
+                dataRandom = Math.round((Math.random() * (maxValue - minValue) + minValue) * Math.pow(10, decimalplace)) / Math.pow(10, decimalplace)
+            } else {
+                dataRandom = Math.random() * (maxValue - minValue) + minValue;
+            }
+            keepGenerating = !(dataRandom > 0.0 && dataRandom % numberIsmultipleOf === 0.00);
+        }
+    }
+    return dataRandom;
 }
 
 const generateString = (options) => {
-    let {
-        stringType = '', stringCase = 0, stringLength = 8, singleDigitStrings = 1
-    } = options
-
     let {
         dataSetSize,
         minValue = 0,
         maxValue = dataSetSize,
         roundup = true,
         decimalplace = 0,
-        numberIsmultipleOf = -1
+        stringType = '',
+        stringCase = 0,
+        stringLength = 8,
+        numberIsmultipleOf = -1,
+        singleDigitStrings = 1
     } = options
+
     if (singleDigitStrings = 1) {
         // dataSetSize && maxValue could be more than 1 digit, 
         //  change based on options argument
@@ -235,7 +254,7 @@ const stringGenConcept = (stringType = '', stringCase = 0, stringLength = 8) => 
         stringCase: 1, //[0- LowerCase...1 UpperCase...2 - TitleCase]
         stringType: 'A0B0C0D0E0', // '', 'hex' '......' => pattern
         stringLength: 8,
-        singleDigitStrings: 0,
+        singleDigitStrings: 1,
         numberIsmultipleOf: -1,
         dataSetTypes: [],
         defaultData: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -269,23 +288,35 @@ const stringGenConcept = (stringType = '', stringCase = 0, stringLength = 8) => 
     return string;
 }
 
-console.log(stringGenConcept('A0B0C0D0E0'));
+// console.log(stringGenConcept('A0B0C0D0E0'));
 // console.log(stringGenConcept('hex', 1));
 
-// console.log(randomDataSet({
-//         returnDataType: 'array',
-//         dataSetSize: 50,
-//         minValue: 0,
-//         maxValue: 10,
-//         roundup: true,
-//         decimalplace: 4,
-//     // stringCase: 0, [0- LowerCase...1 UpperCase...2 - TitleCase]
-//         stringType: '', // '', 'hex' '......' => pattern
-//         stringLength: 8, 
-//          singleDigitStrings: 1, // or 1 for singleDigits and 0 for more than one digit
-//         numberIsmultipleOf: -1,
-//         dataSetTypes: ['string', 'number', 'boolean', 'array', 'object']
-// })) //, 'object'
+// let {
+//     dataSetSize,
+//     minValue = 0,
+//     maxValue = dataSetSize,
+//     roundup = true,
+//     decimalplace = 0,
+//     numberIsmultipleOf = -1
+// } = options
+//minValue, maxValue, roundup, decimalplace, numberIsmultipleOf
+
+// console.log(generateNumber())
+
+console.log(randomDataSet({
+        returnDataType: 'array',
+        dataSetSize: 50,
+        minValue: 0,
+        // maxValue: 10,
+        roundup: true,
+        decimalplace: 4,
+        stringCase: 0, //[0- LowerCase...1 UpperCase...2 - TitleCase]
+        stringType: '', // '', 'hex' '......' => pattern
+        stringLength: 8,
+        singleDigitStrings: 1, // or 1 for singleDigits and 0 for more than one digit
+        numberIsmultipleOf: 3,
+        dataSetTypes: ['string', 'number', 'boolean', 'array', 'object']
+    })) //, 'object'
 
 // console.log(randomDataSet({
 //     // returnDataType: 'array',
