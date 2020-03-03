@@ -1,3 +1,5 @@
+"use strict";
+
 // DEVELOPMENT
 const {
     testmetrics,
@@ -6,7 +8,16 @@ const {
     formatByteSize
 } = require('./testmetrics');
 
+const {
+    adjectives
+} = require('./config/adjectives');
+
+const {
+    nouns
+} = require('./config/nouns');
+
 var origDataTypes, origDataSetSize;
+var randstring = nouns.concat(adjectives); //.shuffle()
 // // PRODUCTION
 // const {testmetrics, argumentTypes} = require('./metrics');
 
@@ -60,6 +71,10 @@ function randomDataSet(options) {
     let {
         returnDataType = 'array', dataSetSize, minValue = 0, maxValue = dataSetSize, roundup = true, decimalplace = 0, strLength = 50, dataSetTypes = []
     } = options;
+    // STRING
+
+    // OBJECTS
+
     // avoid mutation data types available in random dataSet
     origDataTypes = (!origDataTypes) ? options.dataSetTypes.slice() : origDataTypes;
     // avoid changes in the main dataset size required when the function was first invoked
@@ -115,6 +130,10 @@ const randomizeType = (rangeSize) => {
     return Number((Math.random() * (Math.floor(rangeSize) - 1)).toFixed(0));
 }
 
+function randomizeIndexSelection(start, end) {
+    return Math.floor(Math.random() * (end - start)) + start;
+}
+
 const generateBoolean = () => {
     return randomizeType(2) == 0 ? false : true;
 }
@@ -140,30 +159,60 @@ const generateObject = (options, returnDataType, origDataTypes, origDataSetSize)
     return randomDataSet(options);
 }
 
-const stringGenConcept = () => {
-    let length, chars, capitalization, string = '';
-
-
+function stringTitlecase(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-console.log(randomDataSet({
-        returnDataType: 'array',
-        dataSetSize: 50,
-        minValue: 0,
-        maxValue: 10,
-        roundup: true,
-        decimalplace: 4,
-        strLength: 50,
-        dataSetTypes: ['string', 'number', 'boolean', 'array', 'object']
-    })) //, 'object'
-    // console.log(randomDataSet({
-    //     // returnDataType: 'array',
-    //     dataSetSize: 50,
-    //     // minValue: 0,
-    //     // maxValue: 50,
-    //     // roundup: true,
-    //     // decimalplace: 0,
-    //     // strLength: 50,
-    //     // dataSetTypes: [],
-    //     // defaultData: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    // }))
+const stringGenConcept = (charsType = '', stringCase = 0) => {
+    let [string, setOfChars, numbers, hexChars] = ['', '', '0123456789', 'abcdef'];
+    if (charsType == '') {
+        return stringCase == 0 ? randstring[randomizeIndexSelection(0, randstring.length + 1)] : stringCase == 1 ? randstring[randomizeIndexSelection(0, randstring.length + 1)].toUpperCase() : stringCase == 2 ? stringTitlecase(randstring[randomizeIndexSelection(0, randstring.length + 1)]) : randstring[randomizeIndexSelection(0, randstring.length + 1)];
+    } else if (charsType == 'hex') {
+        setOfChars = stringCase == 2 ? numbers + hexChars.toUpperCase() : numbers + hexChars;
+
+    } else {
+        // must be some pattern
+        for (let ii = 0; ii < charsType.length; ii++) {
+            if (charsType[ii] == " ") {
+                setOfChars = ' ';
+            } else if ((charsType[ii] == charsType[ii].toUpperCase()) && (charsType[ii] != charsType[ii].toLowerCase())) {
+                setOfChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            } else if ((charsType[ii] == charsType[ii].toLowerCase()) && (charsType[ii] != charsType[ii].toUpperCase())) {
+                setOfChars = "abcdefghijklmnopqrstuvwxyz";
+            } else if ('0123456789'.indexOf(charsType[ii]) !== -1) {
+                setOfChars = "0123456789";
+
+            } else {
+                setOfChars = "#!@~$%^&*)-_"
+            }
+            console.log(setOfChars)
+            string += setOfChars.charAt(Math.floor(Math.random() * setOfChars.length));
+        }
+    }
+    return string;
+}
+
+console.log(stringGenConcept('A0B0C0D0E0'));
+
+// console.log(randomDataSet({
+//         returnDataType: 'array',
+//         dataSetSize: 50,
+//         minValue: 0,
+//         maxValue: 10,
+//         roundup: true,
+//         decimalplace: 4,
+//         strLength: 50,
+//         dataSetTypes: ['string', 'number', 'boolean', 'array', 'object']
+// })) //, 'object'
+
+// console.log(randomDataSet({
+//     // returnDataType: 'array',
+//     dataSetSize: 50,
+//     // minValue: 0,
+//     // maxValue: 50,
+//     // roundup: true,
+//     // decimalplace: 0,
+//     // strLength: 50,
+//     // dataSetTypes: [],
+//     // defaultData: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+// }))

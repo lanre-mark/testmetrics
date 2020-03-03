@@ -1,3 +1,11 @@
+const {
+    adjectives
+} = require('./config/adjectives');
+
+const {
+    nouns
+} = require('./config/nouns');
+
 // paramter Constants
 const argumentTypes = {
     STRING_TYPE: 'summer',
@@ -9,6 +17,8 @@ const argumentTypes = {
     ARRAY_NUMBERS_TYPE: '',
     OBJECT_ALL_TYPE: 'objects_and_others'
 }
+
+
 
 
 function formatByteSize(bytes) {
