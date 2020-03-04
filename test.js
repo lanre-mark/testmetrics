@@ -185,12 +185,12 @@ function randomDataSet(options) {
                             // if flexibilty is not activated, then take all the data as is WHEN the number of keys are exhausted
                             // THIS WILL OCCUR WHEN WE HAVE MORE randomlyGenerated Data in collectionData but less
                             //      keys to use
-                            console.log('Flexibility is not activated here');
-                            console.log('Size of Object was :', collectionData.length)
-                            console.log('Randomly Generated ::', collectionData)
-                            console.log('Size of Object Keys is :', objectKeys.length)
-                            console.log('currentData is :: ', currentData);
-                            console.log('currentIndex is :: ', currentIndex);
+                            // console.log('Flexibility is not activated here');
+                            // console.log('Size of Object was :', collectionData.length)
+                            // console.log('Randomly Generated ::', collectionData)
+                            // console.log('Size of Object Keys is :', objectKeys.length)
+                            // console.log('currentData is :: ', currentData);
+                            // console.log('currentIndex is :: ', currentIndex);
                             returnDataSet[currentIndex] = currentData;
                         }
                     }
@@ -262,15 +262,9 @@ const generateNumber = (minValue, maxValue, roundup, decimalplace, numberIsmulti
             dataRandom = Math.random() * (maxValue - minValue) + minValue;
         }
     } else {
-        while (keepGenerating) {
-            if (roundup) {
-                dataRandom = Math.round((Math.random() * (maxValue - minValue) + minValue) * Math.pow(10, decimalplace)) / Math.pow(10, decimalplace)
-            } else {
-                dataRandom = Math.random() * (maxValue - minValue) + minValue;
-            }
-            console.log('In here')
-            keepGenerating = !(dataRandom > 0.0 && dataRandom % numberIsmultipleOf === 0.00);
-        }
+        // N.B : make sure first argument minValue is not a 0
+        //       USE (minValue / numberIsmultipleOf) < 1 ? 1 : minValue / numberIsmultipleOf as first argument   
+        dataRandom = generateNumber((minValue / numberIsmultipleOf) < 1 ? 1 : minValue / numberIsmultipleOf, maxValue / numberIsmultipleOf, true, 0, -1) * numberIsmultipleOf;
     }
     return dataRandom;
 }
@@ -359,13 +353,20 @@ function stringTitlecase(string) {
 // } = options
 //minValue, maxValue, roundup, decimalplace, numberIsmultipleOf
 
-// console.log(generateNumber())
+// let
+//     dataSetSize = 50,
+//     minValue = 0,
+//     maxValue = dataSetSize,
+//     roundup = true,
+//     decimalplace = 4,
+//     numberIsmultipleOf = 3;
+// console.log(generateNumber(minValue, maxValue, roundup, decimalplace, numberIsmultipleOf))
 
 
 console.log(
         randomDataSet({
             returnDataType: 'array',
-            dataSetSize: 10,
+            dataSetSize: 50,
             minValue: 0,
             // maxValue: 10,
             roundup: true,
@@ -374,7 +375,7 @@ console.log(
             stringType: '', // '', 'hex' '......' => pattern
             stringLength: 8,
             singleDigitStrings: 1, // or 1 for singleDigits and 0 for more than one digit
-            numberIsmultipleOf: -1,
+            numberIsmultipleOf: 3,
             prefereredKeys: ['min', 'max', 'level'],
             objectSizeFixed: 0, // 0 - same as number of keys provided if is more than 1 OROR 1 - could be less than the number of keys provided.
             dataSetTypes: ['string', 'number', 'boolean', 'array', 'object']
