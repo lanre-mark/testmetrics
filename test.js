@@ -6,7 +6,9 @@ const {
     // argumentTypes,
     sizeofExecutedObject,
     formatByteSize,
-    randomDataSet
+    randomDataSet,
+    generateNumber,
+    randomizeType,
 } = require('./testmetrics');
 
 
@@ -78,24 +80,38 @@ console.log(testmetrics(
 // console.log(generateNumber(minValue, maxValue, roundup, decimalplace, numberIsmultipleOf))
 
 
-console.log(
-        randomDataSet({
-            returnDataType: 'array',
-            dataSetSize: 50,
-            minValue: 0,
-            // maxValue: 10,
-            roundup: true,
-            decimalplace: 4,
-            stringCase: 0, //[0- LowerCase...1 UpperCase...2 - TitleCase]
-            stringType: '', // '', 'hex' '......' => pattern
-            stringLength: 8,
-            singleDigitStrings: 1, // or 1 for singleDigits and 0 for more than one digit
-            numberIsmultipleOf: 3,
-            prefereredKeys: ['min', 'max', 'level'],
-            objectSizeFixed: 0, // 0 - same as number of keys provided if is more than 1 OROR 1 - could be less than the number of keys provided.
-            dataSetTypes: ['string', 'number', 'boolean', 'array', 'object']
-        })
-    ) //, 'object'
+// const typeTemp = ['string', 'number', 'boolean', 'array', 'object'];
+// if (typeTemp.includes('object') && typeTemp.includes('array')) {
+//     // make sure both of them are not in the dataSetTypes
+//     const excludeEither = ['array', 'object'];
+//     const excludeIndex = randomizeType(excludeEither.length)
+//     const excludedType = typeTemp.filter(item => !excludeEither[excludeIndex].includes(item))
+//     console.log(excludedType)
+//         // tempTypes[randomizeType(tempTypes.length)]
+
+// }
+
+
+// console.log(
+const generatedObject = randomDataSet({
+        returnDataType: 'array',
+        dataSetSize: 1000,
+        minValue: 0,
+        // maxValue: 10,
+        roundup: true,
+        decimalplace: 4,
+        stringCase: 0, //[0- LowerCase...1 UpperCase...2 - TitleCase]
+        stringType: '', // '', 'hex' '......' => pattern
+        stringLength: 8,
+        singleDigitStrings: 1, // or 1 for singleDigits and 0 for more than one digit
+        numberIsmultipleOf: 3,
+        prefereredKeys: [], //['min', 'max', 'level'],
+        objectSizeFixed: 0, // 0 - same as number of keys provided if is more than 1 OROR 1 - could be less than the number of keys provided.
+        dataSetTypes: ['string', 'number', 'boolean', 'array', 'object']
+    })
+    // ) //, 'object'
+    // console.log(generatedObject)
+console.log(formatByteSize(sizeofExecutedObject(generatedObject)))
 
 // console.log(randomDataSet({
 //     // returnDataType: 'array',

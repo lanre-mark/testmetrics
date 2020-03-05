@@ -143,7 +143,18 @@ function randomDataSet(options) {
     //                    1 - could be less than the number of keys provided.
 
     // avoid mutation data types available in random dataSet
-    origDataTypes = (!origDataTypes) ? options.dataSetTypes.slice() : origDataTypes;
+    // origDataTypes = (!origDataTypes) ? options.dataSetTypes.slice() : origDataTypes;
+    if (!origDataTypes) {
+        // 'object' and 'array' cannot both be in dataSetTypes :: to avoid JS stack frame/call stack
+        //  calls exceeded error
+        origDataTypes = options.dataSetTypes.slice()
+        if (origDataTypes.includes('object') && origDataTypes.includes('array')) {
+            // make sure both of them are not in the dataSetTypes
+            const excludeEither = ['array', 'object'];
+            const excludeIndex = randomizeType(excludeEither.length)
+            origDataTypes = origDataTypes.filter(typeItem => !excludeEither[excludeIndex].includes(typeItem))
+        }
+    }
     // avoid changes in the main dataset size required when the function was first invoked
     origDataSetSize = (!origDataSetSize) ? options.dataSetSize : origDataSetSize;
     // if numberIsmultipleOf is 0 in options, reset to -1
@@ -321,7 +332,8 @@ const generateNumber = (minValue, maxValue, roundup, decimalplace, numberIsmulti
     } else {
         // N.B : make sure first argument minValue is not a 0
         //       USE (minValue / numberIsmultipleOf) < 1 ? 1 : minValue / numberIsmultipleOf as first argument   
-        dataRandom = generateNumber((minValue / numberIsmultipleOf) < 1 ? 1 : minValue / numberIsmultipleOf, maxValue / numberIsmultipleOf, true, 0, -1) * numberIsmultipleOf;
+        // dataRandom = generateNumber((minValue / numberIsmultipleOf) < 1 ? 1 : minValue / numberIsmultipleOf, maxValue / numberIsmultipleOf, true, 0, -1) * numberIsmultipleOf;
+        dataRandom = Math.floor(Math.random() * (maxValue - minValue)) * numberIsmultipleOf
     }
     return dataRandom;
 }
@@ -402,4 +414,6 @@ module.exports = {
     sizeofExecutedObject, // dont need this exposed in production
     formatByteSize, // dont need this exposed in production
     randomDataSet, // dont need this exposed in production
+    generateNumber, // dont need this exposed in production
+    randomizeType, // dont need this exposed in production
 }
