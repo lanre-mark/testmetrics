@@ -3,37 +3,24 @@
 // DEVELOPMENT
 const {
     testmetrics,
-    // argumentTypes,
+} = require('./testmetrics');
+
+const {
     sizeofExecutedObject,
     formatByteSize,
+} = require('./measure');
+
+const {
     randomDataSet,
     generateNumber,
     randomizeType,
-} = require('./testmetrics');
+} = require('./testData');
 
 
 // // PRODUCTION
 // const {testmetrics, argumentTypes} = require('./metrics');
 
-function test1() {
-    let xty = [];
-    let bb = {};
 
-    function innerM() {
-        const ix = []
-    }
-}
-
-function test2() {
-    const ib = {};
-    const arr = [];
-
-    function innerMe() {
-        let str1 = '';
-    }
-}
-// console.log(test2())
-// Object.getOwnPropertyNames(test2()).map(item => console.log(item))
 
 var obj = {
     locaMethod: function() {
@@ -50,8 +37,8 @@ for (var p in obj) {
 }
 
 console.log(testmetrics(
-    [test1, test2], // , 'test3'
-    [{
+    // [test1, test2], // , 'test3'
+    [], [{
         min: 0,
         max: 100,
         decimals: 0,
