@@ -6,6 +6,10 @@ const {
     generateNumber
 } = require('./testData')
 
+const {
+    getObjectSize
+} = require('./measure')
+
 function testmetrics(
     snippets,
     baseParams,
@@ -25,7 +29,27 @@ function testmetrics(
         return prmObj.prmObj;
     })
 
-    console.log(processedParams)
+    // console.log(processedParams)
+
+    // generate a multidimensioal Array of the same size as the snippets Argument
+    //  this Array keeps track of the functions to be evaluated and a host of other variables
+    //  such as the 
+    //              BigO data array generated, 
+    //              the average time it took for all the iterations
+    //   
+    //
+    //
+    //
+
+    // genrate another array of the same size as the number of keys in the baseParams argument
+    // this will be the a multidimensional array with columns
+    //                                                       number of keys i.e. the number of paramters for each function
+    //                                           and  rows
+    //                                                       number of iterations to be made as the 
+    //                                                       there will be an increased size of dataSet for each iteration
+
+    // begin to conduct the evaluation
+
 
 }
 
