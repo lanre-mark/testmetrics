@@ -13,6 +13,12 @@ const {
     sizeofExecutedObject
 } = require('./measure');
 
+const {
+    thunkify,
+    trampolinedFxn
+} = require('./helper');
+
+
 var origDataTypes, origDataSetSize;
 var randstring = nouns.concat(adjectives); //.shuffle()
 

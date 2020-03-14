@@ -4,11 +4,16 @@ const {
     randomDataSet,
     randomizeType,
     generateNumber
-} = require('./testData')
+} = require('./testData');
 
 const {
     getObjectSize
-} = require('./measure')
+} = require('./measure');
+
+const {
+    thunkify,
+    trampolinedFxn
+} = require('./helper');
 
 function testmetrics(
     snippets,
